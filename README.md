@@ -5,7 +5,7 @@ A help-center chatbot over 11 articles for **Kitebox**, a made-up file-sharing p
 - **Naive**: how most first versions are wired. 1,000-character chunks, dense top-4, "use the context to answer", retrieval on the latest message only, no checks.
 - **Fixed**: heading-aware chunks with breadcrumbs, tables rewritten row by row, hybrid BM25 + dense retrieval with an exact match on error codes, a relevance gate before the model, follow-ups rewritten into standalone questions, a cite-or-refuse prompt, and a check that every citation and every number in the answer is backed by a retrieved excerpt (one retry, then refuse).
 
-Live demo: _see the link in the proposal_. The **Chat** tab has a Side by side mode; click any answer to see what was retrieved, by which retriever, and which checks it passed. The **Eval results** tab shows all 33 questions.
+Live demo: https://rag-chatbot-langchain-mu.vercel.app The **Chat** tab has a Side by side mode; click any answer to see what was retrieved, by which retriever, and which checks it passed. The **Eval results** tab shows all 33 questions.
 
 ## Results (33 questions, `eval/questions.json`)
 
