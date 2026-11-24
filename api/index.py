@@ -68,10 +68,11 @@ def meta():
 
 @app.get("/api/eval")
 def eval_results():
-    path = ROOT / "eval" / "results.json"
-    if not path.exists():
+    runs = {name: json.loads(p.read_text(encoding="utf-8"))
+            for name in ("llm", "extractive") if (p := ROOT / "eval" / f"results_{name}.json").exists()}
+    if not runs:
         raise HTTPException(404, "No eval results yet. Run: python -m eval.run_eval")
-    return json.loads(path.read_text(encoding="utf-8"))
+    return {"runs": runs}
 
 
 @app.get("/api/kb/{name}", response_class=PlainTextResponse)

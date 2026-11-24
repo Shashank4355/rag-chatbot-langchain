@@ -1,0 +1,1338 @@
+{
+ "model": "gemini-flash-latest (+2 fallbacks)",
+ "embeddings": "BAAI/bge-small-en-v1.5 (int8 ONNX)",
+ "ran_at": "2026-11-24 20:26 UTC",
+ "summary": {
+  "naive": {
+   "answers_correct": [
+    33,
+    33
+   ],
+   "retrieval_hit": [
+    28,
+    28
+   ],
+   "out_of_scope_refused": [
+    5,
+    5
+   ],
+   "in_scope_wrongly_refused": [
+    0,
+    28
+   ],
+   "cited_and_checked": [
+    0,
+    28
+   ],
+   "median_ms": 2194,
+   "by_type": {
+    "fact": [
+     9,
+     9
+    ],
+    "table": [
+     5,
+     5
+    ],
+    "code": [
+     4,
+     4
+    ],
+    "out_of_scope": [
+     5,
+     5
+    ],
+    "false_premise": [
+     4,
+     4
+    ],
+    "updated_fact": [
+     2,
+     2
+    ],
+    "multi_part": [
+     1,
+     1
+    ],
+    "follow_up": [
+     3,
+     3
+    ]
+   }
+  },
+  "fixed": {
+   "answers_correct": [
+    33,
+    33
+   ],
+   "retrieval_hit": [
+    28,
+    28
+   ],
+   "out_of_scope_refused": [
+    5,
+    5
+   ],
+   "in_scope_wrongly_refused": [
+    0,
+    28
+   ],
+   "cited_and_checked": [
+    28,
+    28
+   ],
+   "median_ms": 2054,
+   "by_type": {
+    "fact": [
+     9,
+     9
+    ],
+    "table": [
+     5,
+     5
+    ],
+    "code": [
+     4,
+     4
+    ],
+    "out_of_scope": [
+     5,
+     5
+    ],
+    "false_premise": [
+     4,
+     4
+    ],
+    "updated_fact": [
+     2,
+     2
+    ],
+    "multi_part": [
+     1,
+     1
+    ],
+    "follow_up": [
+     3,
+     3
+    ]
+   }
+  }
+ },
+ "rows": [
+  {
+   "id": "refund-monthly",
+   "type": "fact",
+   "q": "Can I get a refund if I cancel my monthly plan?",
+   "history": [],
+   "naive": {
+    "answer": "No. Payments for monthly plans are not refunded. \n\nWhen you cancel a monthly plan, the next charge is stopped, and your workspace will remain on the paid plan until the end of the month you paid for.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can I get a refund if I cancel my monthly plan?",
+    "ms": 2001,
+    "top": [
+     "Billing and refunds > chunk 1",
+     "Billing and refunds > chunk 2",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "No, for monthly plans, payments are not refunded [1]. Cancelling stops the next charge, and the workspace stays on the paid plan until the end of the month you paid for [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can I get a refund if I cancel my monthly plan?",
+    "ms": 1969,
+    "top": [
+     "Billing and refunds > Refunds",
+     "Billing and refunds > Adding and removing users",
+     "Billing and refunds > Invoices and currency"
+    ]
+   }
+  },
+  {
+   "id": "refund-annual",
+   "type": "fact",
+   "q": "How long do I have to cancel an annual plan and still get a full refund?",
+   "history": [],
+   "naive": {
+    "answer": "You have **14 days** from the purchase or renewal date to cancel an annual plan for a full refund.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How long do I have to cancel an annual plan and still get a full refund?",
+    "ms": 2098,
+    "top": [
+     "Billing and refunds > chunk 1",
+     "Billing and refunds > chunk 2",
+     "Plans and pricing > chunk 2"
+    ]
+   },
+   "fixed": {
+    "answer": "You can cancel an annual plan within 14 days of the purchase or renewal date for a full refund [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How long do I have to cancel an annual plan and still get a full refund?",
+    "ms": 2275,
+    "top": [
+     "Billing and refunds > Refunds",
+     "Billing and refunds > Failed payments",
+     "Billing and refunds > Adding and removing users"
+    ]
+   }
+  },
+  {
+   "id": "price-business",
+   "type": "table",
+   "q": "How much does the Business plan cost per user on monthly billing?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, the Business plan costs **$24 per user** on monthly billing.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How much does the Business plan cost per user on monthly billing?",
+    "ms": 2161,
+    "top": [
+     "Plans and pricing > chunk 1",
+     "Release notes > chunk 1",
+     "Billing and refunds > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "On monthly billing, the Business plan costs $24 per user [1]. Prices are in US dollars [2].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How much does the Business plan cost per user on monthly billing?",
+    "ms": 1684,
+    "top": [
+     "Plans and pricing > Price per user",
+     "Plans and pricing > Overview",
+     "Billing and refunds > Refunds"
+    ]
+   }
+  },
+  {
+   "id": "min-users-team",
+   "type": "table",
+   "q": "What's the minimum number of users on the Team plan?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the context, the minimum number of users on the Team plan is **3**.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What's the minimum number of users on the Team plan?",
+    "ms": 1494,
+    "top": [
+     "Plans and pricing > chunk 1",
+     "Release notes > chunk 1",
+     "API and rate limits > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "The minimum number of users on the Team plan is 3 [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What's the minimum number of users on the Team plan?",
+    "ms": 1814,
+    "top": [
+     "Plans and pricing > Price per user",
+     "Plans and pricing > Overview",
+     "Release notes > September 2026"
+    ]
+   }
+  },
+  {
+   "id": "storage-business",
+   "type": "table",
+   "q": "How much storage does each Business user get?",
+   "history": [],
+   "naive": {
+    "answer": "On the Business plan, each user gets **5 TB of storage, pooled** (meaning the total allowance is added together and shared across the workspace).",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How much storage does each Business user get?",
+    "ms": 2908,
+    "top": [
+     "Plans and pricing > chunk 1",
+     "Sharing and permissions > chunk 1",
+     "API and rate limits > chunk 2"
+    ]
+   },
+   "fixed": {
+    "answer": "The Business plan includes 5 TB of storage per user, pooled [1]. Pooled storage means every user's allowance is added together and shared across the workspace [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How much storage does each Business user get?",
+    "ms": 1850,
+    "top": [
+     "Plans and pricing > Storage and file limits",
+     "Desktop sync error codes > KB-309: storage full",
+     "Plans and pricing > Price per user"
+    ]
+   }
+  },
+  {
+   "id": "file-size-team",
+   "type": "table",
+   "q": "What is the largest single file I can upload on the Team plan?",
+   "history": [],
+   "naive": {
+    "answer": "On the Team plan, the largest single file you can upload is **100 GB**.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What is the largest single file I can upload on the Team plan?",
+    "ms": 2533,
+    "top": [
+     "Release notes > chunk 1",
+     "API and rate limits > chunk 2",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "On the Team plan, the largest single file you can upload is 100 GB [2].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What is the largest single file I can upload on the Team plan?",
+    "ms": 2678,
+    "top": [
+     "Release notes > September 2026",
+     "Plans and pricing > Storage and file limits",
+     "API and rate limits > Uploads over the API"
+    ]
+   }
+  },
+  {
+   "id": "version-history-team",
+   "type": "table",
+   "q": "How far back does version history go on the Team plan?",
+   "history": [],
+   "naive": {
+    "answer": "On the Team plan, version history goes back **180 days**.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How far back does version history go on the Team plan?",
+    "ms": 2295,
+    "top": [
+     "Release notes > chunk 1",
+     "Plans and pricing > chunk 2",
+     "Deleted files and data retention > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "On the Team plan, version history goes back 180 days [3]. It was extended from 90 to 180 days [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How far back does version history go on the Team plan?",
+    "ms": 2054,
+    "top": [
+     "Release notes > September 2026",
+     "Deleted files and data retention > Restoring an earlier version",
+     "Plans and pricing > Storage and file limits"
+    ]
+   }
+  },
+  {
+   "id": "code-412",
+   "type": "code",
+   "q": "My desktop app shows KB-412. What do I do?",
+   "history": [],
+   "naive": {
+    "answer": "The **KB-412: clock out of sync** error means your computer's clock differs from the real time by more than 5 minutes, causing Kitebox to reject its requests.\n\nTo fix it:\n1. Turn on automatic time setting in your computer's system settings.\n2. Restart the Kitebox app.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "My desktop app shows KB-412. What do I do?",
+    "ms": 1817,
+    "top": [
+     "Desktop sync error codes > chunk 1",
+     "Desktop sync error codes > chunk 2",
+     "Webhooks > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "Turn on automatic time setting in your system settings [1]. Then, restart the app [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "My desktop app shows KB-412. What do I do?",
+    "ms": 2490,
+    "top": [
+     "Desktop sync error codes > KB-412: clock out of sync",
+     "Desktop sync error codes > Overview",
+     "Desktop sync error codes > KB-204: file in use"
+    ]
+   }
+  },
+  {
+   "id": "code-204",
+   "type": "code",
+   "q": "what does error kb204 mean",
+   "history": [],
+   "naive": {
+    "answer": "Error **KB-204: file in use** means that another program currently has the file open and locked. \n\nTo resolve it, close the program using the file, and Kitebox will sync it within a minute.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "what does error kb204 mean",
+    "ms": 2241,
+    "top": [
+     "Desktop sync error codes > chunk 1",
+     "Desktop sync error codes > chunk 2",
+     "Single sign-on and user provisioning > chunk 2"
+    ]
+   },
+   "fixed": {
+    "answer": "Error KB-204 means another program has the file open and locked [1]. Closing the program allows the file to sync within a minute [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "what does error KB-204 mean",
+    "ms": 2112,
+    "top": [
+     "Desktop sync error codes > KB-204: file in use",
+     "Desktop sync error codes > KB-500: server error",
+     "Desktop sync error codes > KB-309: storage full"
+    ]
+   }
+  },
+  {
+   "id": "code-sso-403",
+   "type": "code",
+   "q": "Users get SSO-403 when they sign in. Why?",
+   "history": [],
+   "naive": {
+    "answer": "Users receive the **SSO-403** error because the email address in the SAML response does not belong to a verified domain of the workspace. \n\nTo resolve this, verify the domain under **Admin console > Domains**.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Users get SSO-403 when they sign in. Why?",
+    "ms": 1758,
+    "top": [
+     "Single sign-on and user provisioning > chunk 2",
+     "Single sign-on and user provisioning > chunk 1",
+     "Webhooks > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "Users get SSO-403 because the email in the SAML response does not belong to a verified domain of the workspace [1]. You can fix this by verifying the domain under Admin console > Domains [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Users get SSO-403 when they sign in. Why?",
+    "ms": 1779,
+    "top": [
+     "Single sign-on and user provisioning > SAML single sign-on > SSO error codes",
+     "Single sign-on and user provisioning > SCIM provisioning",
+     "Webhooks > Overview"
+    ]
+   }
+  },
+  {
+   "id": "code-101",
+   "type": "code",
+   "q": "Sync fails with KB-101 on Windows",
+   "history": [],
+   "naive": {
+    "answer": "Error **KB-101** indicates that a file path is too long, as Windows cannot handle paths longer than 260 characters. \n\nTo resolve this issue:\n* Shorten the folder or file names, or\n* Move the Kitebox folder closer to the drive root (for example, `C:\\Kitebox`).",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Sync fails with KB-101 on Windows",
+    "ms": 2106,
+    "top": [
+     "Desktop sync error codes > chunk 1",
+     "Webhooks > chunk 1",
+     "Single sign-on and user provisioning > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "Windows cannot handle file paths longer than 260 characters [1]. To fix KB-101, shorten folder or file names, or move the Kitebox folder closer to the drive root, such as C:\\Kitebox [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Sync fails with KB-101 on Windows",
+    "ms": 2424,
+    "top": [
+     "Desktop sync error codes > KB-101: path too long",
+     "Desktop sync error codes > KB-204: file in use",
+     "Desktop sync error codes > KB-412: clock out of sync"
+    ]
+   }
+  },
+  {
+   "id": "code-unknown",
+   "type": "out_of_scope",
+   "q": "What does error KB-777 mean?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, there is no mention or explanation of error **KB-777**.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What does error KB-777 mean?",
+    "ms": 2379,
+    "top": [
+     "Desktop sync error codes > chunk 1",
+     "Desktop sync error codes > chunk 2",
+     "Single sign-on and user provisioning > chunk 2"
+    ]
+   },
+   "fixed": {
+    "answer": "I couldn't find that in the Kitebox help center.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 0,
+    "standalone": "What does error KB-777 mean?",
+    "ms": 31,
+    "top": [
+     "Desktop sync error codes > KB-500: server error",
+     "Desktop sync error codes > KB-309: storage full",
+     "Desktop sync error codes > KB-204: file in use"
+    ]
+   }
+  },
+  {
+   "id": "scim-business",
+   "type": "false_premise",
+   "q": "How do I turn on SCIM provisioning on our Business plan?",
+   "history": [],
+   "naive": {
+    "answer": "SCIM 2.0 provisioning is not available on the Business plan; it is an **Enterprise-only** feature. \n\nOn a Business plan, you must manage users manually or via CSV import by navigating to **Admin console > Users > Import**. To use SCIM provisioning with Okta or Microsoft Entra ID, you would need to upgrade to the Enterprise plan.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I turn on SCIM provisioning on our Business plan?",
+    "ms": 2055,
+    "top": [
+     "Single sign-on and user provisioning > chunk 2",
+     "Plans and pricing > chunk 1",
+     "Single sign-on and user provisioning > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "SCIM provisioning is not available on the Business plan, as it is available on Enterprise only [1], [2]. Instead, Business workspaces add and remove users by hand or by CSV import under Admin console > Users > Import [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I turn on SCIM provisioning on our Business plan?",
+    "ms": 2699,
+    "top": [
+     "Single sign-on and user provisioning > SCIM provisioning",
+     "Plans and pricing > Features by plan",
+     "Single sign-on and user provisioning > SAML single sign-on > Setting up SAML"
+    ]
+   }
+  },
+  {
+   "id": "link-password-team",
+   "type": "false_premise",
+   "q": "How do I add a password to a shared link on the Team plan?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, you cannot add a password to a shared link on the Team plan. Adding a password (and an expiry date) to a shared link is only available on the **Business** and **Enterprise** plans.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I add a password to a shared link on the Team plan?",
+    "ms": 1968,
+    "top": [
+     "Sharing and permissions > chunk 1",
+     "Single sign-on and user provisioning > chunk 1",
+     "API and rate limits > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "You cannot add a password to a shared link on the Team plan [1]. Link passwords are only available on Business and Enterprise plans [1, 2].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I add a password to a shared link on the Team plan?",
+    "ms": 4172,
+    "top": [
+     "Sharing and permissions > Shared links",
+     "Plans and pricing > Features by plan",
+     "Sharing and permissions > Guests"
+    ]
+   }
+  },
+  {
+   "id": "paypal",
+   "type": "false_premise",
+   "q": "Can I pay with PayPal?",
+   "history": [],
+   "naive": {
+    "answer": "No, Kitebox does not accept PayPal.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can I pay with PayPal?",
+    "ms": 1989,
+    "top": [
+     "Billing and refunds > chunk 1",
+     "Billing and refunds > chunk 2",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "No, Kitebox does not accept PayPal [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can I pay with PayPal?",
+    "ms": 1496,
+    "top": [
+     "Billing and refunds > Payment methods",
+     "Billing and refunds > Invoices and currency",
+     "Release notes > June 2026"
+    ]
+   }
+  },
+  {
+   "id": "student-discount",
+   "type": "false_premise",
+   "q": "How do I apply for the student discount?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, Kitebox does not offer student or education discounts, so there is no way to apply for one.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I apply for the student discount?",
+    "ms": 2500,
+    "top": [
+     "Billing and refunds > chunk 1",
+     "Single sign-on and user provisioning > chunk 1",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "Kitebox does not offer student or education discounts [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I apply for the student discount?",
+    "ms": 1594,
+    "top": [
+     "Plans and pricing > Discounts",
+     "Plans and pricing > Overview",
+     "Billing and refunds > Adding and removing users"
+    ]
+   }
+  },
+  {
+   "id": "currency-inr",
+   "type": "fact",
+   "q": "Can I be billed in Indian rupees?",
+   "history": [],
+   "naive": {
+    "answer": "No. All Kitebox plans are billed exclusively in US dollars; Kitebox does not bill in other currencies.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can I be billed in Indian rupees?",
+    "ms": 2199,
+    "top": [
+     "Billing and refunds > chunk 1",
+     "Billing and refunds > chunk 2",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "No, Kitebox does not bill in other currencies [1]. All plans are billed in US dollars [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can I be billed in Indian rupees?",
+    "ms": 1448,
+    "top": [
+     "Billing and refunds > Invoices and currency",
+     "Plans and pricing > Price per user",
+     "Billing and refunds > Adding and removing users"
+    ]
+   }
+  },
+  {
+   "id": "rate-limit-business",
+   "type": "updated_fact",
+   "q": "What's the API v2 rate limit on the Business plan?",
+   "history": [],
+   "naive": {
+    "answer": "The API v2 rate limit for the Business plan is **600 requests per minute** (per token).",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What's the API v2 rate limit on the Business plan?",
+    "ms": 2604,
+    "top": [
+     "Release notes > chunk 1",
+     "API and rate limits > chunk 1",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "On the Business plan, the API v2 rate limit is 600 requests per token, per minute [1]. This limit was previously raised from 300 to 600 requests per minute [2].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What's the API v2 rate limit on the Business plan?",
+    "ms": 2846,
+    "top": [
+     "API and rate limits > Rate limits",
+     "Release notes > October 2026",
+     "API and rate limits > Versions"
+    ]
+   }
+  },
+  {
+   "id": "webhook-retries",
+   "type": "updated_fact",
+   "q": "How many times does Kitebox retry a failed webhook delivery?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, Kitebox retries a failed webhook delivery **up to 8 times** with growing gaps, over about 24 hours.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How many times does Kitebox retry a failed webhook delivery?",
+    "ms": 2134,
+    "top": [
+     "Webhooks > chunk 1",
+     "Desktop sync error codes > chunk 2",
+     "Billing and refunds > chunk 2"
+    ]
+   },
+   "fixed": {
+    "answer": "Kitebox retries up to 8 times with growing gaps, over about 24 hours [1]. This was previously 5 retries over 6 hours before being extended [4].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How many times does Kitebox retry a failed webhook delivery?",
+    "ms": 1630,
+    "top": [
+     "Webhooks > Retries",
+     "Desktop sync error codes > KB-500: server error",
+     "Desktop sync error codes > KB-412: clock out of sync"
+    ]
+   }
+  },
+  {
+   "id": "failed-payment-7",
+   "type": "fact",
+   "q": "What happens 7 days after a payment fails?",
+   "history": [],
+   "naive": {
+    "answer": "After 7 days without payment, the workspace becomes read-only. Users can open and download files, but they cannot upload or edit files.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What happens 7 days after a payment fails?",
+    "ms": 1951,
+    "top": [
+     "Billing and refunds > chunk 2",
+     "Billing and refunds > chunk 1",
+     "Webhooks > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "After 7 days without payment, the workspace becomes read-only [1]. People can open and download files, but they cannot upload or edit [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What happens 7 days after a payment fails?",
+    "ms": 1540,
+    "top": [
+     "Billing and refunds > Failed payments",
+     "Webhooks > Retries",
+     "Billing and refunds > Refunds"
+    ]
+   }
+  },
+  {
+   "id": "trash-business",
+   "type": "fact",
+   "q": "How long are deleted files kept in Trash on Business?",
+   "history": [],
+   "naive": {
+    "answer": "On the Business plan, deleted files are kept in the Trash for **90 days**. After that, they are permanently deleted and cannot be recovered.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How long are deleted files kept in Trash on Business?",
+    "ms": 2222,
+    "top": [
+     "Deleted files and data retention > chunk 1",
+     "Plans and pricing > chunk 2",
+     "Billing and refunds > chunk 2"
+    ]
+   },
+   "fixed": {
+    "answer": "You can restore deleted files from Trash for 90 days on Business [1]. After that, they are permanently deleted and support cannot recover them [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How long are deleted files kept in Trash on Business?",
+    "ms": 2489,
+    "top": [
+     "Deleted files and data retention > Restoring deleted files",
+     "Deleted files and data retention > Closing an account",
+     "Desktop sync error codes > KB-309: storage full"
+    ]
+   }
+  },
+  {
+   "id": "region-change",
+   "type": "fact",
+   "q": "Can we move our workspace from the US region to the EU later?",
+   "history": [],
+   "naive": {
+    "answer": "No, you cannot. The data residency region (EU or US) is selected when the workspace is created and cannot be changed afterwards.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can we move our workspace from the US region to the EU later?",
+    "ms": 2936,
+    "top": [
+     "Sharing and permissions > chunk 1",
+     "Sharing and permissions > chunk 2",
+     "Security and compliance > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "No, the region is chosen when the workspace is created and can't be changed afterwards [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Can we move our workspace from the US region to the EU later?",
+    "ms": 1556,
+    "top": [
+     "Security and compliance > Data residency",
+     "Plans and pricing > Features by plan",
+     "Deleted files and data retention > Closing an account"
+    ]
+   }
+  },
+  {
+   "id": "linux",
+   "type": "fact",
+   "q": "Is there a desktop app for Linux?",
+   "history": [],
+   "naive": {
+    "answer": "No, there is no desktop app for Linux. On Linux, you can use the web app or the API.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Is there a desktop app for Linux?",
+    "ms": 3149,
+    "top": [
+     "Desktop sync error codes > chunk 1",
+     "Sharing and permissions > chunk 2",
+     "Sharing and permissions > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "There is no Linux desktop app [1]. On Linux, use the web app or the API [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Is there a desktop app for Linux?",
+    "ms": 1873,
+    "top": [
+     "Desktop sync error codes > Overview",
+     "Desktop sync error codes > KB-204: file in use",
+     "Desktop sync error codes > KB-309: storage full"
+    ]
+   }
+  },
+  {
+   "id": "webhook-header",
+   "type": "fact",
+   "q": "Which header carries the webhook signature?",
+   "history": [],
+   "naive": {
+    "answer": "The webhook signature is carried in the **`X-Kitebox-Signature`** header.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Which header carries the webhook signature?",
+    "ms": 1648,
+    "top": [
+     "Webhooks > chunk 1",
+     "Release notes > chunk 1",
+     "Security and compliance > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "Each request has an X-Kitebox-Signature header [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Which header carries the webhook signature?",
+    "ms": 1926,
+    "top": [
+     "Webhooks > Verifying a webhook",
+     "Webhooks > Overview",
+     "Webhooks > Events"
+    ]
+   }
+  },
+  {
+   "id": "ios-version",
+   "type": "fact",
+   "q": "Which iOS version does the iPhone app need?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, the iPhone app requires **iOS 16 or later**.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Which iOS version does the iPhone app need?",
+    "ms": 2219,
+    "top": [
+     "Mobile apps > chunk 1",
+     "Release notes > chunk 1",
+     "API and rate limits > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "The iPhone and iPad app needs iOS 16 or later [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Which iOS version does the iPhone app need?",
+    "ms": 1629,
+    "top": [
+     "Mobile apps > Overview",
+     "Mobile apps > Camera upload",
+     "Mobile apps > Offline files"
+    ]
+   }
+  },
+  {
+   "id": "multi-team-audit-sso",
+   "type": "multi_part",
+   "q": "We're on Team. How long is the audit log kept, and can we use SAML SSO?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context:\n\n* **Audit log retention:** On the Team plan, the admin audit log is kept for **90 days**.\n* **SAML SSO:** **No**, you cannot use SAML SSO on the Team plan. It is only available on the Business and Enterprise plans.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "We're on Team. How long is the audit log kept, and can we use SAML SSO?",
+    "ms": 2077,
+    "top": [
+     "Plans and pricing > chunk 2",
+     "Single sign-on and user provisioning > chunk 2",
+     "Single sign-on and user provisioning > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "On the Team plan, the admin audit log is kept for 90 days [1]. No, Team cannot use SAML SSO, as it is only available on Business and Enterprise [1], [2].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "We're on Team. How long is the audit log kept, and can we use SAML SSO?",
+    "ms": 2378,
+    "top": [
+     "Plans and pricing > Features by plan",
+     "Single sign-on and user provisioning > SAML single sign-on",
+     "Single sign-on and user provisioning > SAML single sign-on > SSO error codes"
+    ]
+   }
+  },
+  {
+   "id": "follow-business-price",
+   "type": "follow_up",
+   "q": "And Business?",
+   "history": [
+    {
+     "role": "user",
+     "content": "How much is the Team plan per user on annual billing?"
+    },
+    {
+     "role": "assistant",
+     "content": "Team is $10 per user per month on annual billing."
+    }
+   ],
+   "naive": {
+    "answer": "The Business plan is **$20 per user per month** on annual billing (billed upfront for twelve months, with a minimum of 5 users).",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "And Business?",
+    "ms": 1594,
+    "top": [
+     "Sharing and permissions > chunk 1",
+     "Plans and pricing > chunk 2",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "On annual billing, the Business plan is $20 per month per user [3]. Annual billing is paid up front for twelve months [3]. The minimum number of users for the Business plan is 5 [3]. Prices are in US dollars [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How much is the Kitebox Business plan per user on annual billing?",
+    "ms": 4241,
+    "top": [
+     "Plans and pricing > Overview",
+     "Plans and pricing > Discounts",
+     "Plans and pricing > Price per user"
+    ]
+   }
+  },
+  {
+   "id": "follow-kb309-fix",
+   "type": "follow_up",
+   "q": "How do I fix it?",
+   "history": [
+    {
+     "role": "user",
+     "content": "What does error KB-309 mean?"
+    },
+    {
+     "role": "assistant",
+     "content": "KB-309 means the workspace has used all of its storage."
+    }
+   ],
+   "naive": {
+    "answer": "Based on the provided context, you can fix error **KB-309** by doing the following:\n\n* Delete files\n* Empty the Trash\n* Ask an admin to add users or upgrade the plan",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I fix it?",
+    "ms": 2194,
+    "top": [
+     "Desktop sync error codes > chunk 2",
+     "Desktop sync error codes > chunk 1",
+     "Webhooks > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "To fix error KB-309, delete files or empty Trash [1]. Alternatively, ask an admin to add users or upgrade the plan [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "How do I fix error KB-309 in Kitebox?",
+    "ms": 3142,
+    "top": [
+     "Desktop sync error codes > KB-309: storage full",
+     "Desktop sync error codes > KB-500: server error",
+     "Desktop sync error codes > KB-412: clock out of sync"
+    ]
+   }
+  },
+  {
+   "id": "follow-scim",
+   "type": "follow_up",
+   "q": "What about SCIM?",
+   "history": [
+    {
+     "role": "user",
+     "content": "Does Kitebox support SAML single sign-on?"
+    },
+    {
+     "role": "assistant",
+     "content": "Yes, on the Business and Enterprise plans."
+    }
+   ],
+   "naive": {
+    "answer": "SCIM 2.0 provisioning is available on the **Enterprise plan only**. \n\nIt allows you to automatically create, update, and deactivate users from Okta or Microsoft Entra ID. (Team and Business plans must add and remove users manually or via CSV import).",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What about SCIM?",
+    "ms": 2534,
+    "top": [
+     "Single sign-on and user provisioning > chunk 2",
+     "Security and compliance > chunk 1",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "Kitebox supports SCIM 2.0 provisioning on Enterprise only [1]. It is not available on Team and Business workspaces, which must add and remove users by hand or by CSV import [1].",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": false,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Does Kitebox support SCIM provisioning, and if so, on which plans?",
+    "ms": 4291,
+    "top": [
+     "Single sign-on and user provisioning > SCIM provisioning",
+     "Plans and pricing > Overview",
+     "Billing and refunds > Payment methods"
+    ]
+   }
+  },
+  {
+   "id": "oos-ceo",
+   "type": "out_of_scope",
+   "q": "Who is the CEO of Kitebox?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, there is no mention of who the CEO of Kitebox is.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Who is the CEO of Kitebox?",
+    "ms": 2166,
+    "top": [
+     "Plans and pricing > chunk 1",
+     "Security and compliance > chunk 1",
+     "Billing and refunds > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "I couldn't find that in the Kitebox help center.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Who is the CEO of Kitebox?",
+    "ms": 2191,
+    "top": [
+     "Billing and refunds > Payment methods",
+     "Plans and pricing > Overview",
+     "Plans and pricing > Discounts"
+    ]
+   }
+  },
+  {
+   "id": "oos-salesforce",
+   "type": "out_of_scope",
+   "q": "Does Kitebox integrate with Salesforce?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, there is no mention of an integration between Kitebox and Salesforce.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Does Kitebox integrate with Salesforce?",
+    "ms": 2467,
+    "top": [
+     "Security and compliance > chunk 1",
+     "Billing and refunds > chunk 1",
+     "Plans and pricing > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "I couldn't find that in the Kitebox help center.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Does Kitebox integrate with Salesforce?",
+    "ms": 2246,
+    "top": [
+     "Billing and refunds > Payment methods",
+     "Plans and pricing > Discounts",
+     "Plans and pricing > Overview"
+    ]
+   }
+  },
+  {
+   "id": "oos-phone",
+   "type": "out_of_scope",
+   "q": "What's the phone number for Kitebox support?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, there is no phone number listed for Kitebox support. \n\nThe context only mentions that you can contact support with your log file (exported via **Help > Export logs**) and check `status.kitebox.example` if an issue persists.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What's the phone number for Kitebox support?",
+    "ms": 3172,
+    "top": [
+     "Desktop sync error codes > chunk 2",
+     "Billing and refunds > chunk 1",
+     "Security and compliance > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "I couldn't find that in the Kitebox help center.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "What's the phone number for Kitebox support?",
+    "ms": 3164,
+    "top": [
+     "Desktop sync error codes > KB-500: server error",
+     "Billing and refunds > Payment methods",
+     "Desktop sync error codes > KB-412: clock out of sync"
+    ]
+   }
+  },
+  {
+   "id": "oos-dropbox",
+   "type": "out_of_scope",
+   "q": "Is Kitebox cheaper than Dropbox for a team of 10?",
+   "history": [],
+   "naive": {
+    "answer": "Based on the provided context, there is no information about Dropbox or its pricing, so it is not possible to compare the two. \n\nHowever, for a team of 10, Kitebox costs:\n* **Team plan:** $10 per user/month billed annually ($100/month total) or $12 per user/month billed monthly ($120/month total).\n* **Business plan:** $20 per user/month billed annually ($200/month total) or $24 per user/month billed monthly ($240/month total).",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": false,
+    "attempts": 1,
+    "standalone": "Is Kitebox cheaper than Dropbox for a team of 10?",
+    "ms": 5179,
+    "top": [
+     "Plans and pricing > chunk 1",
+     "API and rate limits > chunk 1",
+     "Billing and refunds > chunk 1"
+    ]
+   },
+   "fixed": {
+    "answer": "I couldn't find that in the Kitebox help center.",
+    "ok": true,
+    "retrieval_hit": true,
+    "refused": true,
+    "grounded": true,
+    "attempts": 1,
+    "standalone": "Is Kitebox cheaper than Dropbox for a team of 10?",
+    "ms": 1916,
+    "top": [
+     "Plans and pricing > Overview",
+     "Plans and pricing > Discounts",
+     "Desktop sync error codes > KB-412: clock out of sync"
+    ]
+   }
+  }
+ ]
+}

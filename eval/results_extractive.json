@@ -20,6 +20,10 @@
     0,
     28
    ],
+   "cited_and_checked": [
+    0,
+    28
+   ],
    "median_ms": 54,
    "by_type": {
     "fact": [
@@ -72,6 +76,10 @@
    "in_scope_wrongly_refused": [
     1,
     28
+   ],
+   "cited_and_checked": [
+    27,
+    27
    ],
    "median_ms": 52,
    "by_type": {

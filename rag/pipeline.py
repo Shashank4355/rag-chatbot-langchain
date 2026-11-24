@@ -20,11 +20,11 @@ from pathlib import Path
 import numpy as np
 from langchain_core.documents import Document
 from langchain_core.messages import AIMessage, HumanMessage
-from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from .embeddings import MODEL_NAME, BgeSmallEmbeddings
 from .kb import load_kb, split_fixed, split_naive
+from .llm import LLMUnavailable, make_llm
 from .retrieval import DenseRetriever, HybridRetriever, VectorIndex, codes_in, normalise_codes, tokens
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -65,21 +65,6 @@ CONDENSE_PROMPT = ChatPromptTemplate.from_messages([
 ])
 RETRY_NOTE = ("Your previous answer failed a check: {problem}. Answer again using only the excerpts, with an [n] "
               "citation on every sentence. If the excerpts don't contain the answer, reply with exactly: " + REFUSAL)
-
-
-def make_llm():
-    key = os.getenv("OPENAI_API_KEY")
-    if not key:
-        return None
-    from langchain_openai import ChatOpenAI
-
-    kw = dict(model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"), api_key=key, temperature=0, timeout=30,
-              max_retries=int(os.getenv("OPENAI_MAX_RETRIES", "2")))
-    if os.getenv("OPENAI_BASE_URL"):
-        kw["base_url"] = os.getenv("OPENAI_BASE_URL")
-    if os.getenv("OPENAI_REASONING_EFFORT"):
-        kw["reasoning_effort"] = os.getenv("OPENAI_REASONING_EFFORT")
-    return ChatOpenAI(**kw)
 
 
 # ---------- index ----------
@@ -194,17 +179,20 @@ class RagService:
 
     @property
     def model(self) -> str:
-        return getattr(self.llm, "model_name", None) or "none (extractive answers)"
+        return self.llm.name if self.llm else "none (extractive answers)"
 
     def meta(self) -> dict:
-        return {"llm": self.llm is not None, "model": self.model, "embeddings": MODEL_NAME, "relevance_floor": GATE,
+        return {"llm": self.llm is not None, "model": self.model, "models": self.llm.models if self.llm else [],
+                "embeddings": MODEL_NAME, "relevance_floor": GATE,
                 "chunks": {"fixed": len(self.fixed_index.docs), "naive": len(self.naive_index.docs)},
                 "docs": [{"source": d.metadata["source"], "title": d.metadata["title"], "updated": d.metadata["updated"]} for d in load_kb()]}
 
     def ask(self, message: str, history: list[dict] | None = None, pipeline: str = "fixed") -> dict:
         t0 = time.perf_counter()
+        self._used, self._notice = None, None
         out = self._fixed(message, history or []) if pipeline == "fixed" else self._naive(message, history or [])
-        out.update(pipeline=pipeline, model=self.model, mode="llm" if self.llm else "extractive")
+        out.update(pipeline=pipeline, model=self._used or "extractive", mode="llm" if self._used else "extractive",
+                   notice=self._notice)
         out["timings"]["total_ms"] = round((time.perf_counter() - t0) * 1000)
         return out
 
@@ -213,10 +201,8 @@ class RagService:
         docs = self.dense.invoke(message)  # the latest message only: follow-ups lose their subject
         tr = round((time.perf_counter() - t) * 1000)
         t = time.perf_counter()
-        if self.llm:
-            chain = NAIVE_PROMPT | self.llm | StrOutputParser()
-            answer = chain.invoke({"history": _history(history), "context": "\n\n".join(_context(docs, False)), "question": message})
-        else:
+        answer = self._llm(NAIVE_PROMPT, {"history": _history(history), "context": "\n\n".join(_context(docs, False)), "question": message})
+        if answer is None:
             answer = extractive(message, docs, self.embedder, n=2, top_docs=1, crumb=False)
             answer = re.sub(r"\s*\[\d+\]", "", answer)
         tg = round((time.perf_counter() - t) * 1000)
@@ -225,6 +211,18 @@ class RagService:
             c["detail"] += " (Diagnostic only: this pipeline doesn't act on it.)"
         return {"answer": answer.strip(), "standalone_question": message, "refused": is_refusal(answer), "gate": None,
                 "sources": _sources(docs, ""), "checks": checks, "attempts": 1, "timings": {"retrieve_ms": tr, "generate_ms": tg}}
+
+    def _llm(self, prompt, inputs: dict) -> str | None:
+        """One model call through the fallback chain. None means: answer without a model this time."""
+        if not self.llm:
+            return None
+        try:
+            text, used = self.llm.invoke(prompt, inputs)
+            self._used = used
+            return text
+        except LLMUnavailable as e:
+            self._notice = f"Showing an extractive answer: {e}."
+            return None
 
     def unknown_names(self, text: str) -> list[str]:
         """Capitalised words and acronyms (not sentence-initial) that appear nowhere in the knowledge base."""
@@ -248,9 +246,9 @@ class RagService:
     def condense(self, message: str, history: list[dict]) -> str:
         if not history:
             return message
-        if self.llm:
-            chain = CONDENSE_PROMPT | self.llm | StrOutputParser()
-            return chain.invoke({"history": _history(history), "question": message}).strip() or message
+        rewritten = self._llm(CONDENSE_PROMPT, {"history": _history(history), "question": message})
+        if rewritten:
+            return rewritten
         # Without a model: carry the previous question's subject into a short follow-up.
         last = next((h["content"] for h in reversed(history) if h["role"] == "user"), "")
         return f"{last} {message}" if len(message.split()) <= 8 else message
@@ -287,18 +285,18 @@ class RagService:
 
         ctx = _context(docs, True)
         t = time.perf_counter()
-        if not self.llm:
+        inputs = {"context": "\n\n".join(ctx), "question": standalone}
+        answer = self._llm(FIXED_PROMPT, inputs)
+        if answer is None:
             answer = extractive(standalone, docs, self.embedder)
             checks, attempts = check_answer(answer, ctx, standalone), 0
         else:
-            chain = FIXED_PROMPT | self.llm | StrOutputParser()
-            inputs = {"context": "\n\n".join(ctx), "question": standalone}
-            answer, attempts = chain.invoke(inputs).strip(), 1
+            attempts = 1
             checks = check_answer(answer, ctx, standalone)
             if not all(c["ok"] for c in checks):
                 problem = "; ".join(f"{c['name']}: {c['detail']}" for c in checks if not c["ok"])
                 retry = ChatPromptTemplate.from_messages([*FIXED_PROMPT.messages, ("ai", "{previous}"), ("human", RETRY_NOTE)])
-                answer = (retry | self.llm | StrOutputParser()).invoke({**inputs, "previous": answer, "problem": problem}).strip()
+                answer = self._llm(retry, {**inputs, "previous": answer, "problem": problem}) or REFUSAL
                 attempts = 2
                 checks = check_answer(answer, ctx, standalone)
                 if not all(c["ok"] for c in checks):

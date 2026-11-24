@@ -24,7 +24,8 @@ sys.path.insert(0, str(HERE.parent))
 SOFT_REFUSAL = re.compile(
     r"couldn't find|could not find|can't find|cannot find|unable to find|no information|don't have (any )?information|"
     r"(isn't|is not|aren't|are not|wasn't|was not|not) (mentioned|covered|provided|included|specified|available in the)|"
-    r"(doesn't|does not|do not|don't) (mention|say|include|provide|contain|cover|specify)|not (in|part of) the (context|help)", re.I)
+    r"(doesn't|does not|do not|don't) (mention|say|include|provide|contain|cover|specify)|not (in|part of) the (context|help)|"
+    r"\bno (mention|explanation|details?|phone number|contact)\b|(is|are) not listed|no .{0,40} (is|are) listed", re.I)
 
 
 def load_env(path: str) -> None:
@@ -38,12 +39,60 @@ def refused(answer: str) -> bool:
     return bool(SOFT_REFUSAL.search(answer))
 
 
+def score(q: dict, answer: str) -> tuple[bool, bool]:
+    ref = refused(answer)
+    ok = ref if q.get("refuse") else (not ref and all(re.search(m, answer, re.I) for m in q["must"]))
+    return ok, ref
+
+
+def summarise(rows: list[dict]) -> dict:
+    summary = {}
+    for p in ("naive", "fixed"):
+        by_type = defaultdict(lambda: [0, 0])
+        for row in rows:
+            by_type[row["type"]][0] += row[p]["ok"]
+            by_type[row["type"]][1] += 1
+        in_scope = [r for r in rows if r["type"] != "out_of_scope"]
+        oos = [r for r in rows if r["type"] == "out_of_scope"]
+        answered = [r for r in in_scope if not r[p]["refused"]]
+        summary[p] = {
+            "answers_correct": [sum(r[p]["ok"] for r in rows), len(rows)],
+            "retrieval_hit": [sum(r[p]["retrieval_hit"] for r in in_scope), len(in_scope)],
+            "out_of_scope_refused": [sum(r[p]["refused"] for r in oos), len(oos)],
+            "in_scope_wrongly_refused": [sum(r[p]["refused"] for r in in_scope), len(in_scope)],
+            "cited_and_checked": [sum(bool(re.search(r"\[\d+\]", r[p]["answer"])) and r[p]["grounded"] for r in answered), len(answered)],
+            "median_ms": sorted(r[p]["ms"] for r in rows)[len(rows) // 2],
+            "by_type": dict(by_type),
+        }
+    return summary
+
+
+def rescore(path: Path) -> None:
+    """Re-score saved answers (after a scoring fix) without calling any model."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    qs = {q["id"]: q for q in json.loads((HERE / "questions.json").read_text(encoding="utf-8"))}
+    for row in data["rows"]:
+        for p in ("naive", "fixed"):
+            row[p]["ok"], row[p]["refused"] = score(qs[row["id"]], row[p]["answer"])
+    data["summary"] = summarise(data["rows"])
+    path.write_text(json.dumps(data, indent=1), encoding="utf-8")
+    for p in ("naive", "fixed"):
+        print(p, json.dumps({k: v for k, v in data["summary"][p].items() if k != "by_type"}))
+    for row in data["rows"]:
+        for p in ("naive", "fixed"):
+            if not row[p]["ok"]:
+                print("FAIL", p, row["id"], repr(row[p]["answer"][:150]))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--env")
     ap.add_argument("--only", help="comma-separated question ids")
     ap.add_argument("--pause", type=float, default=0.0, help="seconds between questions (free-tier rate limits)")
+    ap.add_argument("--rescore", help="re-score a saved results file instead of running")
     args = ap.parse_args()
+    if args.rescore:
+        return rescore(Path(args.rescore))
     if args.env:
         load_env(args.env)
     from rag.pipeline import RagService
@@ -59,11 +108,7 @@ def main() -> None:
             r = svc.ask(q["q"], q.get("history", []), p)
             texts = [s["text"] for s in r["sources"]]
             hit = not q["evidence"] or any(all(e.lower() in t.lower() for e in q["evidence"]) for t in texts)
-            ref = refused(r["answer"])
-            if q.get("refuse"):
-                ok = ref
-            else:
-                ok = not ref and all(re.search(m, r["answer"], re.I) for m in q["must"])
+            ok, ref = score(q, r["answer"])
             row[p] = {"answer": r["answer"], "ok": ok, "retrieval_hit": hit, "refused": ref,
                       "grounded": all(c["ok"] for c in r["checks"]), "attempts": r["attempts"],
                       "standalone": r["standalone_question"], "ms": r["timings"]["total_ms"],
@@ -72,26 +117,12 @@ def main() -> None:
             time.sleep(args.pause)
         rows.append(row)
 
-    summary = {}
-    for p in ("naive", "fixed"):
-        by_type = defaultdict(lambda: [0, 0])
-        for row in rows:
-            by_type[row["type"]][0] += row[p]["ok"]
-            by_type[row["type"]][1] += 1
-        in_scope = [r for r in rows if r["type"] != "out_of_scope"]
-        oos = [r for r in rows if r["type"] == "out_of_scope"]
-        summary[p] = {
-            "answers_correct": [sum(r[p]["ok"] for r in rows), len(rows)],
-            "retrieval_hit": [sum(r[p]["retrieval_hit"] for r in in_scope), len(in_scope)],
-            "out_of_scope_refused": [sum(r[p]["refused"] for r in oos), len(oos)],
-            "in_scope_wrongly_refused": [sum(r[p]["refused"] for r in in_scope), len(in_scope)],
-            "median_ms": sorted(r[p]["ms"] for r in rows)[len(rows) // 2],
-            "by_type": {k: v for k, v in by_type.items()},
-        }
+    summary = summarise(rows)
     out = {"model": svc.model, "embeddings": svc.meta()["embeddings"], "ran_at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
            "summary": summary, "rows": rows}
     if not args.only:
-        (HERE / "results.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+        name = "results_llm.json" if svc.llm else "results_extractive.json"
+        (HERE / name).write_text(json.dumps(out, indent=1), encoding="utf-8")
     for p in ("naive", "fixed"):
         print(p, json.dumps({k: v for k, v in summary[p].items() if k != "by_type"}))
 

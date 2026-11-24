@@ -125,7 +125,8 @@ function badges(r, message) {
     const bad = r.checks.filter((c) => !c.ok);
     t.push(bad.length ? `<span class="tag bad">${ICON.warn} ${bad.length === 1 ? '1 check would fail' : bad.length + ' checks would fail'}</span>` : '<span class="tag">No checks run</span>');
   }
-  t.push(`<span class="ms">${(r.timings.total_ms / 1000).toFixed(1)} s · ${r.mode === 'llm' ? 'LLM' : 'extractive'}</span>`);
+  if (r.notice) t.push(`<span class="tag warn" title="${esc(r.notice)}">${ICON.warn} Free quota used: extractive answer</span>`);
+  t.push(`<span class="ms">${(r.timings.total_ms / 1000).toFixed(1)} s · ${r.mode === 'llm' ? esc(r.model) : 'extractive'}</span>`);
   return `<div class="meta-row">${t.join('')}</div>`;
 }
 
@@ -142,6 +143,7 @@ function select(id, el, n) {
 
 function renderInspector(r) {
   const parts = [`<div class="insp"><h3>${r.pipeline === 'fixed' ? 'Fixed pipeline' : 'Naive pipeline'} · ${esc(r.model)}</h3>`];
+  if (r.notice) parts.push(`<div class="rewrite" style="background:var(--warn-soft);color:var(--warn)">${esc(r.notice)}</div>`);
   if (r.pipeline === 'fixed' && r.standalone_question) {
     parts.push(`<h3>Question used for retrieval</h3><div class="rewrite">${esc(r.standalone_question)}</div>`);
   } else if (r.pipeline === 'naive') {
@@ -172,13 +174,22 @@ function renderInspector(r) {
 }
 
 /* ---------- eval ---------- */
-let evalDone = false;
+let evalDone = false, evalRuns = null;
 async function loadEval() {
   if (evalDone) return; evalDone = true;
   const el = $('#eval');
   el.innerHTML = '<p class="note">Loading…</p>';
-  let d; try { d = await (await fetch('/api/eval')).json(); } catch (e) { el.innerHTML = '<p class="err">Couldn’t load eval results.</p>'; return; }
+  try { evalRuns = (await (await fetch('/api/eval')).json()).runs; } catch (e) { el.innerHTML = '<p class="err">Couldn’t load eval results.</p>'; return; }
+  renderEval(evalRuns.llm ? 'llm' : 'extractive');
+}
+function renderEval(run) {
+  const el = $('#eval'), d = evalRuns[run];
   const S = d.summary, n = S.naive, f = S.fixed;
+  const lede = run === 'llm'
+    ? `With <b>${esc(d.model)}</b> answering, the naive pipeline gets ${n.answers_correct[0]} of 33 and the fixed one ${f.answers_correct[0]}. On 11 short, clean articles a strong model makes up for weak retrieval. The difference is whether an answer can be trusted: ${f.cited_and_checked[0]} of ${f.cited_and_checked[1]} fixed answers cite the excerpt they came from and passed the citation and number checks; ${n.cited_and_checked[0]} naive answers do, so a wrong one would look exactly like a right one.`
+    : `No model here: the answer is the best-matching sentences from what was retrieved, so nothing makes up for weak retrieval. This is where heading-aware chunks, hybrid search and the relevance gate show: ${n.answers_correct[0]} correct for naive, ${f.answers_correct[0]} for fixed, and ${n.out_of_scope_refused[0]} vs ${f.out_of_scope_refused[0]} of the ${f.out_of_scope_refused[1]} unanswerable questions refused.`;
+  const runSeg = Object.keys(evalRuns).length > 1 ? `<div class="seg" style="margin:4px 0 14px">${['llm', 'extractive'].map((k) =>
+    `<button data-run="${k}" class="${k === run ? 'on' : ''}">${k === 'llm' ? 'With Gemini' : 'Retrieval only (no LLM)'}</button>`).join('')}</div>` : '';
   const frac = (a) => `${a[0]}<small>/${a[1]}</small>`;
   const kpi = (label, key, sub, lowerBetter) => `<div class="kpi"><div class="l">${label}</div><div class="pair"><div class="v n" title="Naive">${frac(n[key])}</div><div class="v f" title="Fixed">${frac(f[key])}</div></div><div class="sub">${sub}</div></div>`;
   const TYPES = { fact: 'Facts', table: 'Table lookups', code: 'Error codes', false_premise: 'False premises', updated_fact: 'Updated facts', multi_part: 'Multi-part', follow_up: 'Follow-ups', out_of_scope: 'Not in the docs' };
@@ -192,19 +203,21 @@ async function loadEval() {
     <td>${pf(r.naive.ok)}</td><td>${pf(r.fixed.ok)}</td></tr>
     <tr class="detail" data-for="${i}" hidden><td colspan="4">${r.history.length ? `<div class="note" style="margin:0 0 8px">Earlier in the chat: “${esc(r.history[0].content)}”</div>` : ''}<div class="ans2">
       <div><b style="color:var(--naive)">Naive</b>${esc(r.naive.answer)}</div><div><b style="color:var(--accent-text)">Fixed</b>${esc(r.fixed.answer)}${r.fixed.standalone !== r.q ? `<div class="note">Retrieved with: ${esc(r.fixed.standalone)}</div>` : ''}</div></div></td></tr>`).join('');
-  el.innerHTML = `<h2>33 questions through both pipelines</h2>
-    <p class="lede">Same documents, same ${d.model.startsWith('none') ? 'extractive answerer' : 'model (' + esc(d.model) + ')'}, same embeddings. A question passes when the answer has every required fact, or refuses when the answer isn’t in the help center. Run it yourself with <code>python -m eval.run_eval</code>.</p>
+  el.innerHTML = `<h2>33 questions through both pipelines</h2>${runSeg}
+    <p class="lede">${lede}</p>
+    <p class="note" style="margin-top:0">A question passes when the answer has every required fact, or refuses when the help center doesn’t answer it. Same documents and embeddings for both. Run it yourself with <code>python -m eval.run_eval</code>.</p>
     <div class="legend"><span><i class="dot n"></i>Naive</span><span><i class="dot f"></i>Fixed</span><span style="color:var(--muted)">Ran ${esc(d.ran_at)}</span></div>
     <div class="kpis">
       ${kpi('Answers correct', 'answers_correct', 'Required facts present, or a refusal when it should refuse')}
+      ${kpi('Answers cited and checked', 'cited_and_checked', 'Every sentence cites an excerpt; every number found in it')}
       ${kpi('Out-of-scope refused', 'out_of_scope_refused', 'CEO, Salesforce, phone number, Dropbox, KB-777')}
-      ${kpi('Right excerpt retrieved', 'retrieval_hit', 'In-scope questions where the evidence was in the top results')}
       ${kpi('In-scope wrongly refused', 'in_scope_wrongly_refused', 'Lower is better: the cost of being careful')}
     </div>
     <div class="card"><div class="card-h"><b>Correct answers by question type</b><span>Top bar naive, bottom bar fixed</span></div><div class="types">${typeRows}</div></div>
     <div class="card"><div class="card-h"><b>Every question</b><span>Click a row to compare the two answers</span></div><div class="scroll"><table>
       <thead><tr><th>Question</th><th>Type</th><th>Naive</th><th>Fixed</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
   el.querySelectorAll('tr.q').forEach((tr) => tr.addEventListener('click', () => { const d = el.querySelector(`tr[data-for="${tr.dataset.i}"]`); d.hidden = !d.hidden; }));
+  el.querySelectorAll('[data-run]').forEach((b) => b.addEventListener('click', () => renderEval(b.dataset.run)));
 }
 const pf = (ok) => ok ? `<span class="pf p">${ICON.ok} Pass</span>` : `<span class="pf f">${ICON.bad} Fail</span>`;
 
@@ -245,6 +258,6 @@ fetch('/api/meta').then((r) => r.json()).then((m) => {
   const p = $('#model-pill');
   p.innerHTML = m.llm ? `<i></i>${esc(m.model)}` : '<i></i>No LLM key: extractive answers';
   p.classList.toggle('warn', !m.llm);
-  p.title = `Embeddings: ${m.embeddings} · ${m.chunks.fixed} chunks (fixed) / ${m.chunks.naive} (naive)`;
+  p.title = (m.models?.length ? `Models, tried in order: ${m.models.join(' → ')}\n` : '') + `Embeddings: ${m.embeddings} · ${m.chunks.fixed} chunks (fixed) / ${m.chunks.naive} (naive)`;
   const h = location.hash.slice(1); if (['eval', 'kb', 'how'].includes(h)) showTab(h);
 }).catch(() => { $('#model-pill').textContent = 'API offline'; });

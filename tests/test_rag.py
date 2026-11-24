@@ -14,7 +14,8 @@ from rag.retrieval import codes_in, normalise_codes, tokens  # noqa: E402
 @pytest.fixture(scope="module")
 def svc():
     import os
-    os.environ.pop("OPENAI_API_KEY", None)  # extractive mode: deterministic, offline
+    for k in ("OPENAI_API_KEY", "GEMINI_API_KEY"):  # extractive mode: deterministic, offline
+        os.environ.pop(k, None)
     return RagService()
 
 
