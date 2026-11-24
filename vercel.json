@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "memory": 1024,
+      "includeFiles": "{rag,models,index,kb,eval}/**"
+    }
+  },
+  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }]
+}

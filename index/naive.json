@@ -1,0 +1,189 @@
+[
+ {
+  "text": "---\ntitle: API and rate limits\nupdated: 2026-10-05\n---\n# API and rate limits\n\n## Versions\n\nThe current API is v2 at api.kitebox.example/v2. API v1 is deprecated and stops working on 31 March 2027. New integrations must use v2.\n\n## Authentication\n\nCreate a personal access token under Settings > Developer > Tokens and send it as a Bearer token. Tokens can be limited to read-only. Admins on Business and Enterprise can create workspace tokens that aren't tied to one person.\n\n## Rate limits\n\nLimits are per token, per minute.\n\n| Plan | API v2 | API v1 |\n|---|---|---|\n| Free | 60 requests | 30 requests |\n| Team | 120 requests | 60 requests |\n| Business | 600 requests | 60 requests |\n| Enterprise | 1,200 requests | 60 requests |\n\nWhen you go over the limit the API returns HTTP 429 with a Retry-After header in seconds. Wait that long before retrying.\n\n## Uploads over the API",
+  "meta": {
+   "id": "api-and-rate-limits.md#0",
+   "source": "api-and-rate-limits.md",
+   "title": "API and rate limits",
+   "section": "chunk 1",
+   "updated": "2026-10-05",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "Files up to 150 MB can be uploaded in one request. Larger files must use the chunked upload endpoint with chunks between 5 MB and 100 MB.",
+  "meta": {
+   "id": "api-and-rate-limits.md#1",
+   "source": "api-and-rate-limits.md",
+   "title": "API and rate limits",
+   "section": "chunk 2",
+   "updated": "2026-10-05",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Billing and refunds\nupdated: 2026-06-12\n---\n# Billing and refunds\n\n## Payment methods\n\nKitebox accepts Visa, Mastercard and American Express on all paid plans. Business and Enterprise workspaces can also pay by invoice with 30-day terms. Kitebox does not accept PayPal or cryptocurrency.\n\n## Adding and removing users\n\nWhen you add a user in the middle of a billing period you are charged a prorated amount for the rest of that period. Removing a user stops charges from the next billing period; the current period is not refunded.\n\n## Refunds\n\n- Annual plans: you can cancel within 14 days of the purchase or renewal date for a full refund.\n- Monthly plans: payments are not refunded. Cancelling stops the next charge, and the workspace stays on the paid plan until the end of the month you paid for.\n- Refunds go back to the original card and take 5 to 10 business days to appear.\n\n## Failed payments",
+  "meta": {
+   "id": "billing-and-refunds.md#0",
+   "source": "billing-and-refunds.md",
+   "title": "Billing and refunds",
+   "section": "chunk 1",
+   "updated": "2026-06-12",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "If a payment fails, Kitebox retries the card on days 1, 3 and 5. After 7 days without payment the workspace becomes read-only: people can open and download files but can't upload or edit. After 30 days without payment the workspace moves to the Free plan. Files over the Free storage limit are kept for 60 more days and then deleted.\n\n## Invoices and currency\n\nInvoices are available under Admin console > Billing > Invoices. All plans are billed in US dollars; Kitebox does not bill in other currencies.",
+  "meta": {
+   "id": "billing-and-refunds.md#1",
+   "source": "billing-and-refunds.md",
+   "title": "Billing and refunds",
+   "section": "chunk 2",
+   "updated": "2026-06-12",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Deleted files and data retention\nupdated: 2026-04-20\n---\n# Deleted files and data retention\n\n## Restoring deleted files\n\nDeleted files go to Trash. You can restore them from Trash for 30 days on Free and Team, 90 days on Business, and 180 days on Enterprise. After that they are permanently deleted and support can't recover them.\n\nOnly the owner of a file, or a workspace admin, can restore it.\n\n## Restoring an earlier version\n\nOpen the file's menu and choose Version history. How far back you can go depends on the plan (see Plans and pricing). Restoring a version creates a new version; nothing is overwritten.\n\n## Closing an account\n\nWhen a workspace is closed, its files are deleted 60 days later. Backups that contain the workspace are purged within a further 35 days. Admins can export everything from Admin console > Data > Export before closing.",
+  "meta": {
+   "id": "deleted-files-and-retention.md#0",
+   "source": "deleted-files-and-retention.md",
+   "title": "Deleted files and data retention",
+   "section": "chunk 1",
+   "updated": "2026-04-20",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Desktop sync error codes\nupdated: 2026-08-30\n---\n# Desktop sync error codes\n\nThe desktop app runs on Windows 10 and 11 and on macOS 13 or later. There is no Linux desktop app; on Linux, use the web app or the API.\n\n## KB-101: path too long\n\nWindows can't handle file paths longer than 260 characters. Shorten folder or file names, or move the Kitebox folder closer to the drive root, for example C:\\Kitebox.\n\n## KB-204: file in use\n\nAnother program has the file open and locked. Close the program and the file syncs within a minute.\n\n## KB-309: storage full\n\nThe workspace has used all of its storage. Delete files, empty Trash, or ask an admin to add users or upgrade the plan.\n\n## KB-412: clock out of sync\n\nYour computer's clock is more than 5 minutes different from the real time, so Kitebox rejects its requests. Turn on automatic time setting in your system settings and restart the app.\n\n## KB-500: server error",
+  "meta": {
+   "id": "desktop-sync-errors.md#0",
+   "source": "desktop-sync-errors.md",
+   "title": "Desktop sync error codes",
+   "section": "chunk 1",
+   "updated": "2026-08-30",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "Something failed on Kitebox's side. The app retries on its own. If the error lasts more than an hour, check status.kitebox.example and contact support with the log file from Help > Export logs.",
+  "meta": {
+   "id": "desktop-sync-errors.md#1",
+   "source": "desktop-sync-errors.md",
+   "title": "Desktop sync error codes",
+   "section": "chunk 2",
+   "updated": "2026-08-30",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Mobile apps\nupdated: 2026-02-10\n---\n# Mobile apps\n\nThe iPhone and iPad app needs iOS 16 or later. The Android app needs Android 10 or later.\n\n## Offline files\n\nMark a file or folder \"Available offline\" to keep a copy on the device. Free accounts can make individual files available offline; whole folders offline need a paid plan.\n\n## Camera upload\n\nCamera upload copies new photos and videos to a Camera Uploads folder. It can be limited to Wi-Fi only. On iOS, background upload stops if the app hasn't been opened for several days, because of how iOS limits background work.\n\n## Lost device\n\nA workspace admin can sign a lost phone out and remove its offline files from Admin console > Devices > Remote wipe. Remote wipe is available on Business and Enterprise.",
+  "meta": {
+   "id": "mobile-apps.md#0",
+   "source": "mobile-apps.md",
+   "title": "Mobile apps",
+   "section": "chunk 1",
+   "updated": "2026-02-10",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Plans and pricing\nupdated: 2026-09-01\n---\n# Plans and pricing\n\nKitebox has four plans: Free, Team, Business and Enterprise. Prices are per user and in US dollars. Taxes are added at checkout where they apply.\n\n## Price per user\n\n| Plan | Monthly billing | Annual billing (per month) | Minimum users |\n|---|---|---|---|\n| Free | $0 | $0 | 1 |\n| Team | $12 | $10 | 3 |\n| Business | $24 | $20 | 5 |\n| Enterprise | Custom quote | Custom quote | 50 |\n\nAnnual billing is paid up front for twelve months. Enterprise pricing is set by the sales team.\n\n## Storage and file limits\n\n| Plan | Storage | Largest single file | Version history |\n|---|---|---|---|\n| Free | 5 GB per account | 2 GB | 30 days |\n| Team | 1 TB per user, pooled | 100 GB | 180 days |\n| Business | 5 TB per user, pooled | 250 GB | 1 year |\n| Enterprise | Unlimited | 250 GB | 10 years |\n\nPooled storage means every user's allowance is added together and shared across the workspace.\n\n## Features by plan",
+  "meta": {
+   "id": "plans-and-pricing.md#0",
+   "source": "plans-and-pricing.md",
+   "title": "Plans and pricing",
+   "section": "chunk 1",
+   "updated": "2026-09-01",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "- Link passwords and link expiry dates: Business and Enterprise.\n- SAML single sign-on: Business and Enterprise.\n- SCIM user provisioning: Enterprise only.\n- EU or US data residency: Business and Enterprise.\n- Admin audit log: Team keeps 90 days, Business keeps 1 year, Enterprise keeps 3 years.\n\n## Discounts\n\nRegistered non-profits get 30% off Team and Business on annual billing. Kitebox does not offer student or education discounts.",
+  "meta": {
+   "id": "plans-and-pricing.md#1",
+   "source": "plans-and-pricing.md",
+   "title": "Plans and pricing",
+   "section": "chunk 2",
+   "updated": "2026-09-01",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Release notes\nupdated: 2026-10-05\n---\n# Release notes\n\n## October 2026\n\n- API v2 rate limits raised: Business from 300 to 600 requests per minute, Enterprise from 600 to 1,200.\n- The webhook retry window was extended to about 24 hours, with up to 8 retries (previously 5 retries over 6 hours).\n\n## September 2026\n\n- Team plan: largest single file raised from 50 GB to 100 GB.\n- Team plan version history extended from 90 to 180 days.\n\n## June 2026\n\n- Invoice payment with 30-day terms added for Business workspaces. It was previously Enterprise only.",
+  "meta": {
+   "id": "release-notes.md#0",
+   "source": "release-notes.md",
+   "title": "Release notes",
+   "section": "chunk 1",
+   "updated": "2026-10-05",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Security and compliance\nupdated: 2026-03-18\n---\n# Security and compliance\n\n## Encryption\n\nFiles are encrypted at rest with AES-256 and in transit with TLS 1.2 or higher. Kitebox manages the keys. Customer-managed encryption keys are available on Enterprise.\n\n## Certifications\n\nKitebox has a SOC 2 Type II report and ISO 27001 certification. Customers on paid plans can request the SOC 2 report under a non-disclosure agreement.\n\n## GDPR and HIPAA\n\nA data processing agreement for GDPR is available to every paid plan from Admin console > Legal. Kitebox signs a HIPAA business associate agreement on Enterprise only; don't store protected health information on other plans.\n\n## Data residency\n\nBusiness and Enterprise workspaces can choose to keep files in the EU (Frankfurt) or the US (Virginia). The region is chosen when the workspace is created and can't be changed afterwards. Free and Team workspaces are stored in the US.",
+  "meta": {
+   "id": "security-and-compliance.md#0",
+   "source": "security-and-compliance.md",
+   "title": "Security and compliance",
+   "section": "chunk 1",
+   "updated": "2026-03-18",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Sharing and permissions\nupdated: 2026-05-02\n---\n# Sharing and permissions\n\n## Roles\n\n| Role | Can view | Can comment | Can edit | Can share | Can delete |\n|---|---|---|---|---|---|\n| Owner | Yes | Yes | Yes | Yes | Yes |\n| Editor | Yes | Yes | Yes | Yes, unless the owner turns it off | No |\n| Commenter | Yes | Yes | No | No | No |\n| Viewer | Yes | No | No | No | No |\n\n## Shared links\n\nAnyone with a shared link can view the file. On Business and Enterprise you can add a password and an expiry date to a link. Admins on those plans can also block links that work for people outside the workspace.\n\n## Transferring ownership\n\nAn owner can transfer a file or folder to another member of the same workspace from Share > Advanced > Transfer ownership. Ownership can't be transferred to someone outside the workspace.\n\n## Guests",
+  "meta": {
+   "id": "sharing-and-permissions.md#0",
+   "source": "sharing-and-permissions.md",
+   "title": "Sharing and permissions",
+   "section": "chunk 1",
+   "updated": "2026-05-02",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "Team, Business and Enterprise workspaces can invite guests, who are people outside the workspace. Guests don't count as paid users, can only be Commenter or Viewer, and only see what is shared with them directly.",
+  "meta": {
+   "id": "sharing-and-permissions.md#1",
+   "source": "sharing-and-permissions.md",
+   "title": "Sharing and permissions",
+   "section": "chunk 2",
+   "updated": "2026-05-02",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Single sign-on and user provisioning\nupdated: 2026-07-15\n---\n# Single sign-on and user provisioning\n\n## SAML single sign-on\n\nSAML SSO is available on Business and Enterprise. It works with Okta, Microsoft Entra ID (formerly Azure AD), Google Workspace and any SAML 2.0 identity provider.\n\n### Setting up SAML\n\n1. In Admin console > Security > Single sign-on, copy the ACS URL and Entity ID.\n2. Create a SAML app in your identity provider with those values. The NameID must be the user's email address.\n3. Upload the identity provider's metadata XML to Kitebox.\n4. Test with one account before choosing \"Require SSO\" for everyone.\n\n### SSO error codes",
+  "meta": {
+   "id": "sso-and-provisioning.md#0",
+   "source": "sso-and-provisioning.md",
+   "title": "Single sign-on and user provisioning",
+   "section": "chunk 1",
+   "updated": "2026-07-15",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "- SSO-401: the SAML response is signed with a certificate Kitebox doesn't have. Upload the current certificate from your identity provider.\n- SSO-403: the email in the SAML response doesn't belong to a verified domain of the workspace. Verify the domain under Admin console > Domains.\n- SSO-409: a user with that email already exists in a different Kitebox workspace. They must leave that workspace first.\n\n## SCIM provisioning\n\nSCIM 2.0 provisioning is available on Enterprise only. It creates, updates and deactivates users automatically from Okta or Microsoft Entra ID. Team and Business workspaces add and remove users by hand or by CSV import under Admin console > Users > Import.",
+  "meta": {
+   "id": "sso-and-provisioning.md#1",
+   "source": "sso-and-provisioning.md",
+   "title": "Single sign-on and user provisioning",
+   "section": "chunk 2",
+   "updated": "2026-07-15",
+   "anchor": ""
+  }
+ },
+ {
+  "text": "---\ntitle: Webhooks\nupdated: 2026-10-05\n---\n# Webhooks\n\nWebhooks send an HTTPS POST to your URL when something happens in a workspace. They are available on Team, Business and Enterprise.\n\n## Events\n\nfile.created, file.updated, file.deleted, file.shared, user.added and user.removed.\n\n## Verifying a webhook\n\nEach request has an X-Kitebox-Signature header. It is an HMAC-SHA256 of the raw request body, using your webhook secret as the key, encoded in hex. Compare it with your own HMAC before trusting the request.\n\n## Retries\n\nYour endpoint must reply with a 2xx status within 10 seconds. If it doesn't, Kitebox retries up to 8 times with growing gaps, over about 24 hours. After that the delivery is dropped. A webhook that fails every delivery for 3 days in a row is turned off and the admin gets an email.",
+  "meta": {
+   "id": "webhooks.md#0",
+   "source": "webhooks.md",
+   "title": "Webhooks",
+   "section": "chunk 1",
+   "updated": "2026-10-05",
+   "anchor": ""
+  }
+ }
+]
