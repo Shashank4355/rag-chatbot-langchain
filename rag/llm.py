@@ -59,7 +59,9 @@ class FallbackLLM:
         try:
             msg = (prompt | self.runnable).invoke(inputs)
         except Exception as e:  # every model in the chain failed
-            raise LLMUnavailable(f"all free-tier models refused ({type(e).__name__})") from e
+            status = getattr(e, "status_code", "")
+            body = str(getattr(e, "message", "") or e)[:160]
+            raise LLMUnavailable(f"all free-tier models refused ({type(e).__name__} {status}: {body})") from e
         text = msg.content if isinstance(msg.content, str) else "".join(p.get("text", "") for p in msg.content if isinstance(p, dict))
         return text.strip(), msg.response_metadata.get("model_name") or self.models[0]
 
